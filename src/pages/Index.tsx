@@ -1,3 +1,4 @@
+
 import React from "react";
 import { FlowSidebar } from "@/components/flows/FlowSidebar";
 import { FlowCanvas } from "@/components/flows/FlowCanvas";
@@ -5,20 +6,18 @@ import { ConfigPanel } from "@/components/flows/ConfigPanel";
 
 const Index = () => {
   return (
-    <div className="bg-white flex items-stretch overflow-hidden flex-wrap">
+    <div className="bg-[#1E1E1E] flex h-screen overflow-hidden">
       <FlowSidebar />
-      <div className="grow shrink-0 basis-0 w-fit max-md:max-w-full">
-        <div className="bg-[rgba(54,54,54,1)] text-base text-[#010101] font-medium px-[23px] py-[15px] border-[rgba(80,80,80,1)] border-b max-md:max-w-full max-md:px-5">
+      <div className="flex-1">
+        <div className="bg-[#363636] text-white font-medium px-6 py-4 border-b border-[#505050]">
           Configure Flows
         </div>
-        <div className="max-md:max-w-full">
-          <div className="gap-5 flex max-md:flex-col max-md:items-stretch">
-            <div className="w-[74%] max-md:w-full max-md:ml-0">
-              <FlowCanvas />
-            </div>
-            <div className="w-[26%] ml-5 max-md:w-full max-md:ml-0">
-              <ConfigPanel />
-            </div>
+        <div className="flex h-[calc(100vh-64px)]">
+          <div className="w-3/4 bg-[#141A20]">
+            <FlowCanvas />
+          </div>
+          <div className="w-1/4 border-l border-[#505050]">
+            <ConfigPanel />
           </div>
         </div>
       </div>
