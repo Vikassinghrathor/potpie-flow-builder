@@ -32,17 +32,17 @@ const createNodesAndEdges = (data: GraphNode[], parentX = 0, parentY = 0, level 
         label: (
           <div className="w-full">
             <div className="flex items-center justify-between bg-[#282828] px-3 py-2 border-b border-[#404040]">
-              <span className="text-[13px] text-white">{fileName}</span>
-              <img src="copy.svg" className="w-4 h-4 cursor-pointer" alt="Copy" />
+              <span className="text-[13px] text-white font-medium">{fileName}</span>
+              <img src="copy.svg" className="w-4 h-4 cursor-pointer opacity-60 hover:opacity-100" alt="Copy" />
             </div>
             <div className="p-4">
-              <div className="text-[13px] text-white">{functionName}</div>
+              <div className="text-[13px] text-white font-medium">{functionName}</div>
               {node.params.length > 0 && (
                 <div className="mt-3">
-                  <div className="text-[#FFAD62] text-[12px]">"DependentLibs": [{node.params.map(p => p.type).filter(Boolean).join(', ')}]</div>
-                  <div className="text-[#FFAD62] text-[12px] mt-1">"Params": [{node.params.map(p => `"${p.identifier}"`).join(', ')}]</div>
+                  <div className="text-[#FFAD62] text-[12px] font-medium">"DependentLibs": [{node.params.map(p => p.type).filter(Boolean).join(', ')}]</div>
+                  <div className="text-[#FFAD62] text-[12px] mt-1 font-medium">"Params": [{node.params.map(p => `"${p.identifier}"`).join(', ')}]</div>
                   {node.response_object && (
-                    <div className="text-[#FFAD62] text-[12px] mt-1">"ResponseObject": "{node.response_object}"</div>
+                    <div className="text-[#FFAD62] text-[12px] mt-1 font-medium">"ResponseObject": "{node.response_object}"</div>
                   )}
                 </div>
               )}
@@ -57,6 +57,8 @@ const createNodesAndEdges = (data: GraphNode[], parentX = 0, parentY = 0, level 
         borderRadius: '4px',
         padding: 0,
         width: 280,
+        fontSize: '13px',
+        color: '#FFAD62',
       },
     });
 
@@ -66,7 +68,8 @@ const createNodesAndEdges = (data: GraphNode[], parentX = 0, parentY = 0, level 
         source: `${level - 1}-0`,
         target: nodeId,
         type: 'smoothstep',
-        style: { stroke: '#FF9F43' },
+        style: { stroke: '#FF9F43', strokeWidth: 1.5 },
+        animated: true,
       });
     }
 
@@ -117,11 +120,18 @@ export const FlowCanvas = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           fitView
+          defaultEdgeOptions={{
+            type: 'smoothstep',
+            animated: true,
+          }}
         >
           <Background color="#333" gap={16} />
           <Controls 
             className="!bg-[#1E1E1E] !border-[#404040] !rounded-md overflow-hidden"
-            style={{ button: { backgroundColor: '#1E1E1E', color: '#fff', border: 'none' }}}
+            style={{
+              backgroundColor: '#1E1E1E',
+              borderColor: '#404040',
+            }}
           />
           <MiniMap 
             nodeColor="#FF9F43"
@@ -129,7 +139,7 @@ export const FlowCanvas = () => {
             className="!bg-[#1E1E1E] !border-[#404040]"
           />
         </ReactFlow>
-        <button className="absolute bottom-4 left-4 bg-[#FF9F43] text-white px-4 py-2 rounded flex items-center gap-2">
+        <button className="absolute bottom-4 left-4 bg-[#FF9F43] text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-[#F08F33] transition-colors">
           <span className="text-lg">+</span>
           Add Methods
         </button>
