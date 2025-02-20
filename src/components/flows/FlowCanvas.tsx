@@ -26,15 +26,35 @@ const createNodesAndEdges = (data: GraphNode[], parentX = 0, parentY = 0, level 
     nodes.push({
       id: nodeId,
       position: { x, y: currentY },
-      data: { label: node.function },
+      data: { 
+        label: (
+          <div className="p-4">
+            <div className="font-medium text-sm">{node.function.split(':')[1]}</div>
+            {node.params.length > 0 && (
+              <div className="text-xs mt-2">
+                <span className="text-[#FFAD62]">Params:</span>
+                {node.params.map(param => (
+                  <div key={param.identifier} className="ml-2">
+                    {param.identifier}: {param.type || 'any'}
+                  </div>
+                ))}
+              </div>
+            )}
+            {node.response_object && (
+              <div className="text-xs mt-2">
+                <span className="text-[#FFAD62]">Response:</span> {node.response_object}
+              </div>
+            )}
+          </div>
+        )
+      },
       type: 'default',
       style: {
         background: '#1E1E1E',
         color: '#fff',
         border: '1px solid #FF9F43',
         borderRadius: '4px',
-        padding: '10px',
-        width: 200,
+        width: 250,
       },
     });
 
@@ -54,7 +74,7 @@ const createNodesAndEdges = (data: GraphNode[], parentX = 0, parentY = 0, level 
       edges.push(...childElements.edges);
     }
 
-    currentY += 150;
+    currentY += 200;
   });
 
   return { nodes, edges };
