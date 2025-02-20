@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { getConfiguration, getDependencies, saveConfiguration } from "@/services/api";
 import { ConfigurationType } from "@/types/graph";
@@ -191,7 +190,16 @@ export const ConfigPanel = () => {
               }))}
             />
           </div>
+          <div className="mt-4">
+            <label className="text-sm text-[#E6E6E6] block mb-2">Database Hostname</label>
+            <input
+              type="text"
+              className="w-full p-2 rounded bg-transparent border border-[#FFAD62] text-[#E6E6E6]"
+              placeholder="localhost"
+            />
+          </div>
         </div>
+
       </div>
 
       <div className="border-t border-[#595858] mt-8 p-4 sticky bottom-0 bg-[#363636] flex justify-center">
