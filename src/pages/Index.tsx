@@ -9,7 +9,7 @@ const Index = () => {
     <div className="bg-[#1E1E1E] flex h-screen w-full">
       <FlowSidebar />
       <div className="flex-1 flex flex-col">
-        <div className="bg-[#363636] text-white font-medium px-6 py-4 border-b border-[#505050]">
+        <div className="bg-[#363636] text-white font-medium px-20 py-4 border-b border-[#505050]">
           Configure Flows
         </div>
         <div className="flex flex-1">

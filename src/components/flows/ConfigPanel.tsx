@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { getConfiguration, getDependencies, saveConfiguration } from "@/services/api";
+import {
+  getConfiguration,
+  getDependencies,
+  saveConfiguration,
+} from "@/services/api";
 import { ConfigurationType } from "@/types/graph";
+import Downarrow from "../../assets/Polygon 3.svg";
+import checkboxicon from "../../assets/Group 65.svg"
 
 export const ConfigPanel = () => {
   const [dependencies, setDependencies] = useState<string[]>([]);
-  const [selectedDependencies, setSelectedDependencies] = useState<string[]>([]);
+  const [selectedDependencies, setSelectedDependencies] = useState<string[]>(
+    []
+  );
   const [config, setConfig] = useState<ConfigurationType>({
     flow: "cart_campaign",
     entities_to_mock: [],
@@ -12,6 +20,7 @@ export const ConfigPanel = () => {
     db_config: {
       username: "",
       password: "",
+      hostname: "",
     },
   });
 
@@ -19,10 +28,20 @@ export const ConfigPanel = () => {
     const fetchData = async () => {
       try {
         const deps = await getDependencies("cart_campaign");
-        setDependencies(deps);
+        setDependencies(
+          deps || [
+            "httpx",
+            "product_client",
+            "sqlalchemy.orm",
+            "cart_crud",
+            "cartModel",
+          ]
+        );
         const savedConfig = await getConfiguration("cart_campaign");
         setConfig(savedConfig);
-        setSelectedDependencies(savedConfig.entities_to_mock);
+        setSelectedDependencies(
+          savedConfig.entities_to_mock || ["httpx", "product_client"]
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -42,15 +61,13 @@ export const ConfigPanel = () => {
   };
 
   const toggleDependency = (dep: string) => {
-    setSelectedDependencies(prev =>
-      prev.includes(dep)
-        ? prev.filter(d => d !== dep)
-        : [...prev, dep]
+    setSelectedDependencies((prev) =>
+      prev.includes(dep) ? prev.filter((d) => d !== dep) : [...prev, dep]
     );
   };
 
   const toggleDbMock = (value: boolean) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
       is_db_mocked: value,
     }));
@@ -58,44 +75,57 @@ export const ConfigPanel = () => {
 
   return (
     <div className="h-full overflow-auto bg-[#363636]">
-      <div className="flex flex-col px-6 py-4">
-        <h2 className="text-xl font-semibold text-white">cart_campaign</h2>
+      <div className="flex flex-col px-4 py-5">
+        <h2 className="text-lg font-medium text-white mb-4">cart_campaign</h2>
 
-        <div className="flex items-center gap-2 mt-6">
-          <img
-            src="check-circle.svg"
-            className="w-4 h-4"
-            alt="Check"
-          />
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-3 h-3 flex items-center justify-center rounded-full bg-[#FF7A00] flex-shrink-0">
+            <span className="text-[#FFFFFF] text-[9px] font-medium">i</span>
+          </div>
           <span className="text-[#E6E6E6] text-sm">Last 2 commits scanned</span>
         </div>
 
-        <div className="flex items-center gap-2 mt-2">
-          <img
-            src="check-circle.svg"
-            className="w-4 h-4"
-            alt="Check"
-          />
-          <span className="text-[#E6E6E6] text-sm">5 entry points identified</span>
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-3 h-3 flex items-center justify-center rounded-full bg-[#FF7A00] flex-shrink-0">
+            <span className="text-[#FFFFFF] text-[9px] font-medium">i</span>
+          </div>
+          <span className="text-[#E6E6E6] text-sm">
+            5 entry points identified
+          </span>
         </div>
 
-        <h3 className="mt-6 text-white font-medium">Selected flow</h3>
-        <div className="rounded border flex justify-between items-center mt-2 p-3 border-[#D9D9D9]">
-          <span className="text-[#E6E6E6] text-sm">POST /carts/{"{carts_id}"}</span>
-          <img
-            src="chevron-down.svg"
-            className="w-3 h-3"
-            alt="Expand"
-          />
+        <h3 className="text-sm text-white font-medium mb-2">Selected flow</h3>
+        <div className="relative mb-6">
+          <select
+            className="w-full appearance-none bg-[#2E2E2E] border border-[#D9D9D9] text-[#FFFFFF] py-2 px-3 pr-8 rounded text-sm cursor-pointer focus:outline-none"
+            value={config.flow}
+            onChange={(e) =>
+              setConfig((prev) => ({ ...prev, flow: e.target.value }))
+            }
+          >
+            <option value="cart_campaign">POST /carts/{"{carts_id}"}</option>
+          </select>
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+            <img src={Downarrow} alt="arrowdownlogo" />
+          </div>
         </div>
 
-        <h3 className="mt-6 text-white font-medium">Dependencies</h3>
-        <p className="text-sm text-[#E6E6E6] mt-2">
+        <h3 className="text-sm text-white font-medium mb-1">Dependencies</h3>
+        <p className="text-xs text-[#A4A4A4] mb-4">
           Select the ones you want to mock
         </p>
 
-        <div className="flex flex-col gap-3 mt-4">
-          {dependencies.map(dep => (
+        <div className="flex flex-col gap-3 mb-6">
+          {(dependencies.length > 0
+            ? dependencies
+            : [
+                "httpx",
+                "product_client",
+                "sqlalchemy.orm",
+                "cart_crud",
+                "cartModel",
+              ]
+          ).map((dep) => (
             <div key={dep} className="flex items-center gap-3">
               <div
                 className={`w-4 h-4 rounded cursor-pointer flex items-center justify-center ${
@@ -106,38 +136,51 @@ export const ConfigPanel = () => {
                 onClick={() => toggleDependency(dep)}
               >
                 {selectedDependencies.includes(dep) && (
-                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <img src={checkboxicon} alt="checkicon" />
                 )}
               </div>
               <span className="text-[#E6E6E6] text-sm">{dep}</span>
+              <div className="ml-auto">
+                <img src={checkboxicon} alt="checkicon" />
+              </div>
             </div>
           ))}
         </div>
 
-        <h3 className="mt-8 text-white font-medium">Databases</h3>
-        <p className="text-sm text-[#E6E6E6] mt-2">
+        <h3 className="text-sm text-white font-medium mb-1">Databases</h3>
+        <p className="text-xs text-[#A4A4A4] mb-4">
           Select if you want to mock databases
         </p>
 
-        <div className="flex flex-col gap-3 mt-4">
+        <div className="flex flex-col gap-3 mb-6">
           <div className="flex items-center gap-3">
             <div
               className={`w-4 h-4 rounded cursor-pointer flex items-center justify-center ${
-                config.is_db_mocked
-                  ? "bg-[#009FF9]"
-                  : "border border-[#646464]"
+                config.is_db_mocked ? "bg-[#009FF9]" : "border border-[#646464]"
               }`}
               onClick={() => toggleDbMock(true)}
             >
               {config.is_db_mocked && (
-                <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  width="10"
+                  height="8"
+                  viewBox="0 0 10 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 4L3.5 6.5L9 1"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </div>
-            <span className="text-[#E6E6E6] text-sm">I want to mock databases</span>
+            <span className="text-[#E6E6E6] text-sm">
+              I want to mock databases
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <div
@@ -149,63 +192,105 @@ export const ConfigPanel = () => {
               onClick={() => toggleDbMock(false)}
             >
               {!config.is_db_mocked && (
-                <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  width="10"
+                  height="8"
+                  viewBox="0 0 10 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 4L3.5 6.5L9 1"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </div>
-            <span className="text-[#E6E6E6] text-sm">I don't want to mock database</span>
+            <span className="text-[#E6E6E6] text-sm">
+              I don't want to mock database
+            </span>
           </div>
         </div>
 
-        <h3 className="mt-6 text-white font-medium">Database Configurations</h3>
-        <div className={config.is_db_mocked ? "opacity-50 pointer-events-none" : ""}>
-          <div className="mt-4">
-            <label className="text-sm text-[#E6E6E6] block mb-2">Database User</label>
+        <h3 className="text-sm text-white font-medium mb-4">
+          Database Configurations
+        </h3>
+        <div
+          className={
+            config.is_db_mocked ? "opacity-50 pointer-events-none" : ""
+          }
+        >
+          <div className="mb-4">
+            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
+              Database User
+            </div>
             <input
               type="text"
-              className="w-full p-2 rounded bg-transparent border border-[#FFAD62] text-[#E6E6E6]"
+              placeholder="postgres"
+              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
               value={config.db_config.username}
-              onChange={e => setConfig(prev => ({
-                ...prev,
-                db_config: {
-                  ...prev.db_config,
-                  username: e.target.value,
-                },
-              }))}
+              onChange={(e) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  db_config: {
+                    ...prev.db_config,
+                    username: e.target.value,
+                  },
+                }))
+              }
             />
           </div>
-          <div className="mt-4">
-            <label className="text-sm text-[#E6E6E6] block mb-2">Database Password</label>
+
+          <div className="mb-4">
+            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
+              Database Password
+            </div>
             <input
               type="password"
-              className="w-full p-2 rounded bg-transparent border border-[#FFAD62] text-[#E6E6E6]"
+              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
               value={config.db_config.password}
-              onChange={e => setConfig(prev => ({
-                ...prev,
-                db_config: {
-                  ...prev.db_config,
-                  password: e.target.value,
-                },
-              }))}
+              onChange={(e) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  db_config: {
+                    ...prev.db_config,
+                    password: e.target.value,
+                  },
+                }))
+              }
             />
           </div>
-          <div className="mt-4">
-            <label className="text-sm text-[#E6E6E6] block mb-2">Database Hostname</label>
+
+          <div className="mb-4">
+            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
+              Database Hostname
+            </div>
             <input
               type="text"
-              className="w-full p-2 rounded bg-transparent border border-[#FFAD62] text-[#E6E6E6]"
               placeholder="localhost"
+              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
+              value={config.db_config.hostname || ""}
+              onChange={(e) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  db_config: {
+                    ...prev.db_config,
+                    hostname: e.target.value,
+                  },
+                }))
+              }
             />
           </div>
         </div>
-
       </div>
 
-      <div className="border-t border-[#595858] mt-8 p-4 sticky bottom-0 bg-[#363636] flex justify-center">
+      <div className="border-t border-[#595858] mt-4 p-4 sticky bottom-0 bg-[#363636] flex justify-end">
         <button
           onClick={handleSave}
-          className="bg-[#009FF9] text-white px-6 py-2 rounded-md hover:bg-[#008CE0] transition-colors"
+          className="bg-[#009FF9] text-white px-10 py-2 rounded-sm hover:bg-[#0090E0] transition-colors text-sm"
         >
           Save
         </button>
