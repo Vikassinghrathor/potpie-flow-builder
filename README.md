@@ -35,10 +35,10 @@ A modern web application for visualizing function call flows and managing mock c
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/Vikassinghrathor/potpie-flow-builder.git
 
 # Navigate to project directory
-cd function-flow-visualizer
+cd flow-builder
 
 # Install dependencies
 npm install
