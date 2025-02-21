@@ -6,21 +6,35 @@ import {
 } from "@/services/api";
 import { ConfigurationType } from "@/types/graph";
 import Downarrow from "../../assets/Polygon 3.svg";
-import checkboxicon from "../../assets/Group 65.svg"
+import checkboxicon from "../../assets/Group 65.svg";
+import TextField from "@mui/material/TextField";
+
+// Update the type definition to include hostname
+interface DbConfig {
+  username: string;
+  password: string;
+  hostname: string;
+}
+
+// Extend the ConfigurationType to use our updated DbConfig
+interface ExtendedConfigurationType
+  extends Omit<ConfigurationType, "db_config"> {
+  db_config: DbConfig;
+}
 
 export const ConfigPanel = () => {
   const [dependencies, setDependencies] = useState<string[]>([]);
   const [selectedDependencies, setSelectedDependencies] = useState<string[]>(
     []
   );
-  const [config, setConfig] = useState<ConfigurationType>({
+  const [config, setConfig] = useState<ExtendedConfigurationType>({
     flow: "cart_campaign",
     entities_to_mock: [],
     is_db_mocked: false,
     db_config: {
       username: "",
       password: "",
-      hostname: "",
+      hostname: "", // Now properly typed
     },
   });
 
@@ -38,7 +52,8 @@ export const ConfigPanel = () => {
           ]
         );
         const savedConfig = await getConfiguration("cart_campaign");
-        setConfig(savedConfig);
+        // Cast the savedConfig to match our extended type
+        setConfig(savedConfig as ExtendedConfigurationType);
         setSelectedDependencies(
           savedConfig.entities_to_mock || ["httpx", "product_client"]
         );
@@ -71,6 +86,33 @@ export const ConfigPanel = () => {
       ...prev,
       is_db_mocked: value,
     }));
+  };
+
+  // Material UI custom styles
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      color: "#E6E6E6",
+      "& fieldset": {
+        borderColor: "#FFAD62",
+      },
+      "&:hover fieldset": {
+        borderColor: "#FFAD62",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#FFAD62",
+      },
+      backgroundColor: "#363636",
+    },
+    "& .MuiInputLabel-root": {
+      color: "#A4A4A4",
+      "&.Mui-focused": {
+        color: "#FFAD62",
+      },
+    },
+    "& .MuiInputBase-input": {
+      padding: "10px",
+    },
+    marginBottom: "24px",
   };
 
   return (
@@ -223,14 +265,13 @@ export const ConfigPanel = () => {
             config.is_db_mocked ? "opacity-50 pointer-events-none" : ""
           }
         >
-          <div className="mb-4">
-            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
-              Database User
-            </div>
-            <input
-              type="text"
+          <div className="border-t border-[#3D3D3D] pt-4">
+            <TextField
+              id="database-user"
+              label="Database User"
+              variant="outlined"
+              fullWidth
               placeholder="postgres"
-              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
               value={config.db_config.username}
               onChange={(e) =>
                 setConfig((prev) => ({
@@ -241,16 +282,16 @@ export const ConfigPanel = () => {
                   },
                 }))
               }
+              sx={textFieldStyles}
+              size="small"
             />
-          </div>
 
-          <div className="mb-4">
-            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
-              Database Password
-            </div>
-            <input
+            <TextField
+              id="database-password"
+              label="Database Password"
+              variant="outlined"
+              fullWidth
               type="password"
-              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
               value={config.db_config.password}
               onChange={(e) =>
                 setConfig((prev) => ({
@@ -261,18 +302,17 @@ export const ConfigPanel = () => {
                   },
                 }))
               }
+              sx={textFieldStyles}
+              size="small"
             />
-          </div>
 
-          <div className="mb-4">
-            <div className="text-xs text-[#A4A4A4] mb-1 border-t border-[#3D3D3D] pt-2 pb-1">
-              Database Hostname
-            </div>
-            <input
-              type="text"
+            <TextField
+              id="database-hostname"
+              label="Database Hostname"
+              variant="outlined"
+              fullWidth
               placeholder="localhost"
-              className="w-full p-2 rounded bg-[#363636] border border-[#FFAD62] text-[#E6E6E6] text-sm focus:outline-none"
-              value={config.db_config.hostname || ""}
+              value={config.db_config.hostname}
               onChange={(e) =>
                 setConfig((prev) => ({
                   ...prev,
@@ -282,6 +322,8 @@ export const ConfigPanel = () => {
                   },
                 }))
               }
+              sx={textFieldStyles}
+              size="small"
             />
           </div>
         </div>

@@ -224,7 +224,7 @@ export const FlowCanvas = () => {
           <span className="text-lg leading-none">+</span>
           Add Methods
         </button>
-        <div className="flex items-center gap-2 px-4 py-3 bg-[#363636] border-b border-[#595858] text-[#808080] text-sm">
+        <div className="flex items-center gap-2 px-4 py-3 bg-[#363636] border-b border-[#595858] text-[#BDBDBD] text-sm">
           <span>cart</span>
           <span>▸</span>
           <span>cart_routes.py</span>
