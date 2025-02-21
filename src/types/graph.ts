@@ -22,5 +22,6 @@ export interface ConfigurationType {
   db_config: {
     username: string;
     password: string;
+    hostname: string; // Missing
   };
 }
