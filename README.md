@@ -1,69 +1,131 @@
-# Welcome to your Lovable project
 
-## Project info
+# Function Flow Visualizer
 
-**URL**: https://lovable.dev/projects/f81a3584-5802-4152-9b42-809e1abfa7be
+A modern web application for visualizing function call flows and managing mock configurations. Built with React, TypeScript, and React Flow.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### 1. Function Flow Visualization
+- Interactive graph visualization of function calls and their relationships
+- Smooth animated connections between nodes
+- Zoomable and pannable canvas
+- Minimap for easy navigation
+- Copy function names with a single click
+- Clear visualization of function parameters and return types
 
-**Use Lovable**
+### 2. Mock Configuration
+- Select specific functions to mock
+- Visual dependency tree
+- Persistent configuration storage
+- Easy-to-use interface for managing mock settings
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f81a3584-5802-4152-9b42-809e1abfa7be) and start prompting.
+### 3. Database Configuration
+- Toggle between real and mocked database
+- Configure database credentials
+- Secure credential management
+- Automatic configuration persistence
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone the repository
+git clone <your-repo-url>
 
-Follow these steps:
+# Navigate to project directory
+cd function-flow-visualizer
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application requires the following environment variables:
 
-**Use GitHub Codespaces**
+```env
+VITE_API_BASE_URL=your_api_base_url
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## API Endpoints
 
-## What technologies are used for this project?
+The application interacts with the following API endpoints:
 
-This project is built with .
+### GET /graph
+Retrieves the function call graph data.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### GET /dependencies
+Fetches the list of available dependencies that can be mocked.
+Query Parameters:
+- `flow`: The name of the flow to get dependencies for
 
-## How can I deploy this project?
+### GET /configuration
+Retrieves the current configuration for a specific flow.
+Query Parameters:
+- `flow`: The name of the flow to get configuration for
 
-Simply open [Lovable](https://lovable.dev/projects/f81a3584-5802-4152-9b42-809e1abfa7be) and click on Share -> Publish.
+### POST /configuration
+Saves the configuration settings.
+Request Body:
+```json
+{
+  "flow": "string",
+  "entities_to_mock": ["string"],
+  "is_db_mocked": boolean,
+  "db_config": {
+    "username": "string",
+    "password": "string",
+    "hostname": "string"
+  }
+}
+```
 
-## I want to use a custom domain - is that possible?
+## Technology Stack
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- **React**: Frontend framework
+- **TypeScript**: Type safety and better developer experience
+- **React Flow**: Graph visualization
+- **Tailwind CSS**: Styling
+- **Axios**: API communication
+- **Vite**: Build tool and development server
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── flows/
+│   │   ├── FlowCanvas.tsx    # Graph visualization component
+│   │   ├── FlowSidebar.tsx   # Configuration sidebar
+│   │   └── ConfigPanel.tsx   # Configuration panel
+├── services/
+│   └── api.ts               # API integration
+├── types/
+│   └── graph.ts            # TypeScript type definitions
+└── pages/
+    └── Index.tsx           # Main page component
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the development team.
